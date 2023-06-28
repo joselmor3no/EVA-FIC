@@ -12,7 +12,7 @@ class CardFormatos extends StatelessWidget {
       shadowColor: Colors.black,
       color: const Color.fromARGB(255, 245, 247, 246),
       child: Padding(
-        padding: const EdgeInsets.all(15.0),
+        padding: const EdgeInsets.all(5.0),
         child: Column(
           children: [
             Icon(

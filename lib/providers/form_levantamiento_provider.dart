@@ -1,8 +1,9 @@
-import 'package:eva_fi_umich/models/levantamientos_model.dart';
 import 'package:flutter/material.dart';
+
 
 class FormLevantamietoProvider extends ChangeNotifier {
   GlobalKey<FormState> formLevantamientoKey = GlobalKey<FormState>();
+  
 
   String _nombre = '';
   String _fecha = '';
@@ -17,19 +18,21 @@ class FormLevantamietoProvider extends ChangeNotifier {
   void setNombre(String value) {
     _nombre = value;
   }
+
   void setFecha(String value) {
     _fecha = value;
   }
+
   void setMunicipio(String value) {
     _municipio = value;
   }
+
   void setEstado(String value) {
     _estado = value;
   }
 
 
   bool isValidForm() {
-    print('$fecha - $municipio');
     return formLevantamientoKey.currentState?.validate() ?? false;
   }
 }

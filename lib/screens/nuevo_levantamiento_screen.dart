@@ -1,117 +1,163 @@
-import 'package:eva_fi_umich/providers/db_provider.dart';
-import 'package:eva_fi_umich/providers/form_levantamiento_provider.dart';
-import 'package:eva_fi_umich/ui/input_decorations.dart';
 import 'package:flutter/material.dart';
+import 'dart:io';
 import 'package:provider/provider.dart';
+import 'package:path_provider/path_provider.dart';
+
+import 'package:eva_fi_umich/providers/db_provider.dart';
+import 'package:eva_fi_umich/providers/providers.dart';
+import 'package:eva_fi_umich/ui/input_decorations.dart';
+
 
 class NuevoLevantamientoScreen extends StatelessWidget {
-  TextEditingController _date = TextEditingController();
+  final TextEditingController _date = TextEditingController();
+
+  NuevoLevantamientoScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final formLevantamiento = Provider.of<FormLevantamietoProvider>(context);
+    final levantamientosProvider = Provider.of<LevantamientosProvider>(context);
+    final estadosMunicipiosProvider =
+        Provider.of<EstadosMunicipiosProvider>(context);
+
     //DBProvider.db.database;
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
         title: const Text('Crear una nueva inspección'),
       ),
-      body: Container(
-        margin: EdgeInsets.all(20),
-        width: double.infinity,
-        decoration: _boxDecoration(),
-        child: Padding(
-          padding: EdgeInsets.all(30.0),
-          child: Form(
-            key: formLevantamiento.formLevantamientoKey,
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            child: Column(
-              children: [
-                SizedBox(height: 30),
-                TextFormField(
-                  decoration: InputDecorations.authInputDecoration(
-                      hintText: '', labelText: 'Nombre Levantamiento'),
-                  onChanged: (value) => formLevantamiento.setNombre(value),
-                  validator: (value) {
-                    return (value != null && value.length >= 6)
-                        ? null
-                        : 'La contraseña debe de ser de 6 caracteres';
-                  },
-                ),
-                SizedBox(height: 50),
-                TextFormField(
-                  controller: _date,
-                  decoration: InputDecoration(
-                    icon: Icon(Icons.calendar_month),
-                    labelText: 'Selecciona la fecha',
+      body: SingleChildScrollView(
+        child: Container(
+          margin: const EdgeInsets.all(20),
+          width: double.infinity,
+          decoration: _boxDecoration(),
+          child: Padding(
+            padding: const EdgeInsets.all(30.0),
+            child: Form(
+              key: formLevantamiento.formLevantamientoKey,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              child: Column(
+                children: [
+                  const SizedBox(height: 30),
+                  TextFormField(
+                    decoration: InputDecorations.authInputDecoration(
+                        hintText: '', labelText: 'Nombre Inspección'),
+                    onChanged: (value) => formLevantamiento.setNombre(value),
+                    validator: (value) {
+                      return (value != null && value.length >= 6)
+                          ? null
+                          : 'La contraseña debe de ser de 6 caracteres';
+                    },
                   ),
-                  onTap: () async {
-                    DateTime? date = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime(1900),
-                        lastDate: DateTime(2100));
-                    if (date != null) {
-                      _date.text = date.toString();
-                    }
-                  },
-                  onChanged: (value) => formLevantamiento.setFecha(value),
-                  validator: (value) {
-                    return (value != null && value.length >= 3)
-                        ? null
-                        : 'Seleccione una fecha';
-                  },
-                ),
-                SizedBox(height: 50),
-                TextFormField(
-                  decoration: InputDecorations.authInputDecoration(
-                      hintText: '', labelText: 'Estado'),
-                  onChanged: (value) => formLevantamiento.setEstado(value),
-                  validator: (value) {
-                    return (value != null && value.length >= 3)
-                        ? null
-                        : 'Ingrese un Estado';
-                  },
-                ),
-                SizedBox(height: 50),
-                TextFormField(
-                  decoration: InputDecorations.authInputDecoration(
-                      hintText: '', labelText: 'Municipio'),
-                  onChanged: (value) => formLevantamiento.setMunicipio(value),
-                  validator: (value) {
-                    return (value != null && value.length >= 3)
-                        ? null
-                        : 'Ingrese un Municipio';
-                  },
-                ),
-                SizedBox(height: 50),
-                MaterialButton(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                  disabledColor: Colors.grey,
-                  elevation: 0,
-                  color: const Color.fromARGB(255, 3, 31, 81),
-                  child: Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 80, vertical: 15),
-                      child: Text(
-                        'Guardar Inspección',
-                        style: TextStyle(color: Colors.white),
-                      )),
-                  onPressed: () {
-                    if (formLevantamiento.isValidForm()) {
-                      final tempInsert = LevantamientosModel(
-                          nombre: formLevantamiento.nombre,
-                          fecha: formLevantamiento.fecha,
-                          estado: formLevantamiento.estado,
-                          municipio: formLevantamiento.municipio);
-                      DBProvider.db.nuevoLevantamiento(tempInsert);
-                      formLevantamiento.formLevantamientoKey.currentState?.reset();
-                      Navigator.pushReplacementNamed(context, 'levantamientos');
-                    }
-                  },
-                ),
-              ],
+                  const SizedBox(height: 50),
+                  TextFormField(
+                    controller: _date,
+                    decoration: const InputDecoration(
+                      icon: Icon(Icons.calendar_month),
+                      labelText: 'Selecciona la fecha',
+                    ),
+                    onTap: () async {
+                      DateTime? date = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(1900),
+                          lastDate: DateTime(2100));
+                      if (date != null) {
+                        _date.text = date.toString();
+                        formLevantamiento.setFecha(_date.text);
+                      }
+                    },
+                    onChanged: (value) => formLevantamiento.setFecha(value),
+                    validator: (value) {
+                      return (value != null && value.length >= 3)
+                          ? null
+                          : 'Seleccione una fecha';
+                    },
+                  ),
+                  const SizedBox(height: 50),
+                  DropdownButtonFormField<String>(
+                    value:
+                        null, // Valor seleccionado, inicialmente no hay ninguno seleccionado
+                    onChanged: (value) {
+                      if (value != null) {
+                        formLevantamiento.setEstado(value);
+                      }
+                    },
+                    validator: (value) {
+                      return (value != null && value.length >= 3)
+                          ? null
+                          : 'Seleccione un estado';
+                    },
+                    items: estadosMunicipiosProvider.estados.map((estado) {
+                      // Crea un DropdownMenuItem para cada estado
+                      return DropdownMenuItem<String>(
+                        value: estado.nombre, // Valor del estado
+                        child: Text('${estado
+                            .nombre} (${estado
+                            .sigla})'), // Texto a mostrar en el menú desplegable
+                      );
+                    }).toList(),
+                    decoration: const InputDecoration(
+                      labelText: 'Estado', // Etiqueta del campo
+                    ),
+                  ),
+                  const SizedBox(height: 50),
+                  TextFormField(
+                    decoration: InputDecorations.authInputDecoration(
+                        hintText: '', labelText: 'Municipio'),
+                    onChanged: (value) => formLevantamiento.setMunicipio(value),
+                    validator: (value) {
+                      return (value != null && value.length >= 3)
+                          ? null
+                          : 'Ingrese un Municipio';
+                    },
+                  ),
+                  const SizedBox(height: 50),
+                  MaterialButton(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    disabledColor: Colors.grey,
+                    elevation: 0,
+                    color: const Color.fromARGB(255, 3, 31, 81),
+                    child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 30, vertical: 15),
+                        child: const Text(
+                          'Guardar Inspección',
+                          style: TextStyle(color: Colors.white),
+                        )),
+                    onPressed: () async {
+                      if (formLevantamiento.isValidForm()) {
+                        final tempInsert = LevantamientosModel(
+                            nombre: formLevantamiento.nombre,
+                            fecha: formLevantamiento.fecha,
+                            estado: formLevantamiento.estado,
+                            municipio: formLevantamiento.municipio);
+                        var idInspeccion =
+                            await DBProvider.db.nuevoLevantamiento(tempInsert);
+
+                        final String folderName = 'inspeccion_$idInspeccion';
+                        final directory =
+                            await getApplicationDocumentsDirectory();
+                        String folderPath = '${directory.path}/$folderName';
+                        if (await Directory(folderPath).exists()) {
+                          //print('La carpeta ya existe: $folderPath');
+                        } else {
+                          // Crea la carpeta
+                          await Directory(folderPath).create(recursive: true);
+                          //print('Se creo la carpeta: $folderPath');
+                        }
+                        formLevantamiento.formLevantamientoKey.currentState
+                            ?.reset();
+                            levantamientosProvider.cargarLevantamientos();
+                        // ignore: use_build_context_synchronously
+                        Navigator.pushReplacementNamed(
+                            context, 'levantamientos');
+                      }
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),

@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:eva_fi_umich/providers/db_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 
 class LevantamientosProvider extends ChangeNotifier {
   List<LevantamientosModel> levantamientos = [];
@@ -22,5 +25,13 @@ class LevantamientosProvider extends ChangeNotifier {
 
   borrarLevantamiento(int id) async {
     await DBProvider.db.borrarLevantamientos(id);
+    final directory = await getApplicationDocumentsDirectory();
+    final destinationPath =
+        '${directory.path}/inspeccion_$id/';
+    final carpeta = Directory(destinationPath);
+    if (await carpeta.exists()) {
+      await carpeta.delete(recursive: true);
+    }
   }
+
 }

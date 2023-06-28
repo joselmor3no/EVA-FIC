@@ -7,7 +7,7 @@ class AuthBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       // color: Colors.red,
       width: double.infinity,
       height: double.infinity,
@@ -15,7 +15,7 @@ class AuthBackground extends StatelessWidget {
         children: [
           _PurpleBox(),
           _HeaderIcon(),
-          this.child,
+          child,
         ],
       ),
     );
@@ -48,15 +48,15 @@ class _PurpleBox extends StatelessWidget {
       decoration: _purpleBackground(),
       child: Stack(
         children: [
-          Positioned(child: _Bubble(), top: 0, left: 0),
-          Positioned(child: _Bubble(), bottom: 0, right: 0),
+          Positioned(top: 0, left: 0, child: _Bubble()),
+          Positioned(bottom: 0, right: 0, child: _Bubble()),
         ],
       ),
     );
   }
 
-  BoxDecoration _purpleBackground() => BoxDecoration(
-          gradient: LinearGradient(colors: [
+  BoxDecoration _purpleBackground() => const BoxDecoration(
+          gradient:  LinearGradient(colors: [
         Color.fromRGBO(6, 38, 77, 0.934),
         Color.fromRGBO(10, 40, 80, 1)
       ]));
@@ -70,7 +70,7 @@ class _Bubble extends StatelessWidget {
       height: 100,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(0),
-          color: Color.fromRGBO(255, 255, 255, 0.05)),
+          color: const Color.fromRGBO(255, 255, 255, 0.05)),
     );
   }
 }

@@ -10,7 +10,7 @@ class AuthService extends ChangeNotifier {
   final String _baseUrl = 'identitytoolkit.googleapis.com';
   final String _firebaseToken = 'AIzaSyDySspaEEeKRrgRaufVU0SvydTToKezJZg';
 
-  final storage = new FlutterSecureStorage();
+  final storage = const FlutterSecureStorage();
 
   // Si retornamos algo, es un error, si no, todo bien!
   Future<String?> createUser(String email, String password) async {
@@ -48,7 +48,7 @@ class AuthService extends ChangeNotifier {
 
     final resp = await http.post(url, body: json.encode(authData));
     final Map<String, dynamic> decodedResp = json.decode(resp.body);
-    print(decodedResp['idToken']);
+
     if ( decodedResp.containsKey('idToken') ) {
         // Token hay que guardarlo en un lugar seguro
         // decodedResp['idToken'];
