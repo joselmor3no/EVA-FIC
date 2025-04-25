@@ -34,7 +34,7 @@ class DBProvider {
     final path = join(documentsDirectory.path, 'evaFICDB.db');
 
     // Crear base de datos
-    return await openDatabase(path, version: 2, onOpen: (db) {},
+    return await openDatabase(path, version: 3, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute('''
           CREATE TABLE inspecciones(
@@ -43,7 +43,8 @@ class DBProvider {
             fecha TEXT,
             estado TEXT,
             municipio TEXT,
-            usuario TEXT
+            usuario TEXT,
+            subido TEXT
           )
         ''');
 
@@ -350,7 +351,7 @@ class DBProvider {
 
   Future<List<String>> obtenerDatosInspector() async {
     final db = await database;
-    const id = 1;
+    const id = 0;
     final res = await db.query('inspector', where: 'id=?', whereArgs: [id]);
     if (res.isNotEmpty) {
       return [
@@ -359,7 +360,20 @@ class DBProvider {
         res[0]['clave'].toString()
       ];
     } else {
-      // Si no se encontraron registros, puedes devolver una lista con valores por defecto o manejar la situación de otra forma.
+      return ["0", "", ""];
+    } 
+  }
+
+  Future<List<String>> obtenerInformacionInspector(String usuario) async {
+    final db = await database;
+    final res = await db.query('inspector', where: 'usuario=?', whereArgs: [usuario]);
+    if (res.isNotEmpty) {
+      return [
+        res[0]['id'].toString(),
+        res[0]['nombre'].toString(),
+        res[0]['clave'].toString()
+      ];
+    } else {
       return ["0", "", ""];
     }
   }
@@ -435,7 +449,7 @@ class DBProvider {
   Future<int> editarInformacionInspector(
       InformacionInspectorModel informacionInspector) async {
     final db = await database;
-    const id = 1;
+    const id = 0;
     //print(informacionInspector.toJson());
     final res =
         await db.rawQuery('SELECT MAX(id) as max_consecutivo FROM inspector');
@@ -458,6 +472,18 @@ class DBProvider {
     final res = await db.delete('inspecciones', where: 'id=?', whereArgs: [id]);
     return res;
   }
+
+  Future<int> actualizarLevantamientoSubido(int idLocal, String idFirebase) async {
+  final db = await database;
+  return await db.update(
+    'inspecciones',
+    {
+      'subido': idFirebase,
+    },
+    where: 'id = ?',
+    whereArgs: [idLocal],
+  );
+}
 
   //=============Hacer una copia de una tabla sqlite a txt
   Future<void> exportTableToTxt(

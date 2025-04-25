@@ -1,3 +1,5 @@
+export 'package:eva_fic_umich2024/screens/pdf_viewer_screen.dart';
+export 'package:eva_fic_umich2024/screens/about_screen.dart';
 export 'package:eva_fic_umich2024/screens/no_internet_screen.dart';
 export 'package:eva_fic_umich2024/screens/inspecciones_screen.dart';
 export 'package:eva_fic_umich2024/screens/formato_escuela_screen.dart';

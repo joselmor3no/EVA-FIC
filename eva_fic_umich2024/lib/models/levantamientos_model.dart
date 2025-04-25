@@ -11,6 +11,7 @@ class LevantamientosModel {
         required this.estado,
         required this.municipio,
         required this.usuario,
+        this.subido,
     });
 
     int? id;
@@ -19,6 +20,7 @@ class LevantamientosModel {
     String estado;
     String municipio;
     String usuario;
+    String? subido='';
 
     factory LevantamientosModel.fromJson(Map<String, dynamic> json) => LevantamientosModel(
         id: json["id"] != null ? int.tryParse(json["id"].toString()) : null,
@@ -27,6 +29,7 @@ class LevantamientosModel {
         estado: json["estado"],
         municipio: json["municipio"],
         usuario: json["usuario"],
+        subido: json["subido"],
     );
 
     Map<String, dynamic> toJson() => {
@@ -36,5 +39,6 @@ class LevantamientosModel {
         "estado": estado,
         "municipio": municipio,
         "usuario": usuario,
+        "subido": subido,
     };
 }

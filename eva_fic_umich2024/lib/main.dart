@@ -7,7 +7,7 @@ import 'package:eva_fic_umich2024/screens/internet_screen.dart';
 import 'package:eva_fic_umich2024/utils/check_internet_connection.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+ 
 import 'package:eva_fic_umich2024/providers/providers.dart';
 import 'package:eva_fic_umich2024/screens/screens.dart';
 import 'package:eva_fic_umich2024/services/services.dart';
@@ -73,6 +73,7 @@ class MyApp extends StatelessWidget {
       title: 'EVAFIC App',
       initialRoute: 'checking',
       routes: {
+        'about': (_) => const AboutScreen(),
         'nuevo_levantamiento': (_) => NuevoLevantamientoScreen(),
         'checking': (_) => const CheckAuthScreen(),
         'home': (_) => const HomeScreen(),

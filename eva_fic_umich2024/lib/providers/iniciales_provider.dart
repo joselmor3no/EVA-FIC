@@ -1,16 +1,17 @@
+import 'package:eva_fic_umich2024/providers/db_provider.dart';
 import 'package:flutter/material.dart';
 
 class InicialesProvider extends ChangeNotifier {
-  int _selectMenu = 2;
+  int _selectMenu = 1;
   int _id = 0;
-  String _usuarioSistema = ''; 
+  String _usuarioSistema = '';
   String _nombreInspector = '';
   String _claveInspector = '';
 
   int get id {
     return _id;
   }
-  
+
   String get usuarioSistema {
     return _usuarioSistema;
   }
@@ -31,7 +32,7 @@ class InicialesProvider extends ChangeNotifier {
     _id = vid;
     notifyListeners();
   }
-  
+
   set claveInspector(String vclaveInspector) {
     _claveInspector = vclaveInspector;
     notifyListeners();
@@ -49,6 +50,14 @@ class InicialesProvider extends ChangeNotifier {
 
   set usuarioSistema(String vusuarioSistema) {
     _usuarioSistema = vusuarioSistema;
+    notifyListeners();
+  }
+
+  Future<void> cargarDatosInspector() async {
+    final datosInspector = await DBProvider.db.obtenerInformacionInspector(_usuarioSistema);
+    //print(datosInspector);
+    nombreInspector = datosInspector[1];
+    claveInspector = datosInspector[2];
     notifyListeners();
   }
 }

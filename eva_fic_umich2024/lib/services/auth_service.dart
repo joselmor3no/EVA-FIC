@@ -9,20 +9,33 @@ class AuthService extends ChangeNotifier {
   // Si retornamos algo, es un error, si no, todo bien!
   Future<String?> createUser(String email, String password) async {
     try {
-      UserCredential userCredential = await FirebaseAuth.instance
+      await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
-      await storage.write(key: 'token', value: userCredential.user?.uid);
-      await storage.write(key: 'usuario', value: userCredential.user?.email);
+      
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         return "Password muy debil";
       } else if (e.code == 'email-already-in-use') {
         return "Email en uso";
       } else {
-        return "Hubo un error con el correo $e";
+        return "Hubo un error con el correo o con tu conexión a internet";
       }
     }
     return null;
+  }
+
+  // Recuperar contraseña
+  Future<String?> resetPassword(String email) async {
+    try {
+      await _firebaseAuth.sendPasswordResetEmail(email: email);
+      return "Se ha enviado un enlace de recuperación a tu correo";
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        return "No existe una cuenta con este correo";
+      } else {
+        return "Hubo un error al intentar enviar el correo de recuperación";
+      }
+    }
   }
 
   Future<String?> login(String email, String password) async {
@@ -31,6 +44,8 @@ class AuthService extends ChangeNotifier {
           .signInWithEmailAndPassword(email: email, password: password);
       final a = userCredential.user;
       if (a?.uid != null) {
+        await storage.write(key: 'token', value: userCredential.user?.uid);
+        await storage.write(key: 'usuario', value: userCredential.user?.email);
         return null;
       }
     } on FirebaseAuthException catch (e) {

@@ -28,7 +28,7 @@ class LoginScreen extends StatelessWidget {
                   create: (_) => LoginFormProvider(), child: _LoginForm())
             ],
           )),
-          const SizedBox(height: 50),
+          const SizedBox(height: 1),
           TextButton(
               onPressed: () =>
                   Navigator.pushReplacementNamed(context, 'register'),
@@ -37,7 +37,8 @@ class LoginScreen extends StatelessWidget {
                       WidgetStateProperty.all(Colors.indigo.withOpacity(0.1)),
                   shape: WidgetStateProperty.all(const StadiumBorder())),
               child: const Text('')),
-          const SizedBox(height: 80),
+ 
+          const SizedBox(height:1),
           TextButton(
               onPressed: () =>
                   Navigator.pushReplacementNamed(context, 'registro'),
@@ -52,7 +53,7 @@ class LoginScreen extends StatelessWidget {
                   color: Color.fromARGB(255, 38, 56, 88),
                 ),
               )),
-          const SizedBox(height: 80),
+          const SizedBox(height: 10),
           const Text(
             '© 2024 Facultad de Ingeniería Civil',
             style: TextStyle(
@@ -67,7 +68,24 @@ class LoginScreen extends StatelessWidget {
               fontSize: 16,
               color: Colors.grey,
             ),
-          )
+          ),
+          const SizedBox(height: 20),
+          TextButton(
+              onPressed: () =>
+                  Navigator.pushNamed(context, 'about'), // Navega al "Acerca de"
+              style: ButtonStyle(
+                overlayColor: WidgetStateProperty.all(Colors.indigo.withOpacity(0.1)),
+                shape: WidgetStateProperty.all(const StadiumBorder())
+              ),
+
+              child: const Text(
+                'Acerca de',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromARGB(255, 38, 56, 88),
+                ),
+              )),
         ],
       ),
     )));
@@ -161,7 +179,31 @@ class _LoginForm extends StatelessWidget {
                   child: Text(
                     loginForm.isLoading ? 'Espere' : 'Ingresar',
                     style: const TextStyle(color: Colors.white),
-                  )))
+                  ))),
+          const SizedBox(height:40),
+          // Botón de recuperación de contraseña
+          TextButton(
+            onPressed: () async {
+              final authService = Provider.of<AuthService>(context, listen: false);
+              if (loginForm.email.isEmpty) {
+                NotificationsService.showSnackbar("Por favor, ingresa un correo válido");
+                return;
+              }
+              final String? respuestaCorreo = await authService.resetPassword(loginForm.email);
+              NotificationsService.showSnackbar(respuestaCorreo ?? "Revisa tu bandeja de entrada para restablecer tu contraseña.");
+            },
+            style: ButtonStyle(
+                  overlayColor:
+                      WidgetStateProperty.all(Colors.black.withOpacity(0.1))),
+            child: const Text(
+              'Recuperar mi contraseña!',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Color.fromARGB(255, 38, 56, 88),
+              ),
+            ),
+          ),
         ],
       ),
     );

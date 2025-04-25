@@ -6,6 +6,14 @@ import 'package:path_provider/path_provider.dart';
 
 class LevantamientosProvider extends ChangeNotifier {
   List<LevantamientosModel> levantamientos = [];
+  bool _subiendoLevantamiento = false;
+
+  bool get isLoading => _subiendoLevantamiento;
+
+  void setLoading(bool loading) {
+    _subiendoLevantamiento = loading;
+    notifyListeners();
+  }
 
   nuevoLevantamiento(String nombre, String fecha, String estado,
       String municipio, String usuario) async {
@@ -14,7 +22,8 @@ class LevantamientosProvider extends ChangeNotifier {
         fecha: fecha,
         estado: estado,
         municipio: municipio,
-        usuario: usuario);
+        usuario: usuario,
+        subido: '');
     final id = await DBProvider.db.nuevoLevantamiento(tempInsert);
     tempInsert.id = id;
     levantamientos.add(tempInsert);
@@ -34,6 +43,18 @@ class LevantamientosProvider extends ChangeNotifier {
     final carpeta = Directory(destinationPath);
     if (await carpeta.exists()) {
       await carpeta.delete(recursive: true);
+    }
+  }
+
+  actualizarSubidaLevantamiento(int idLocal, String idFirebase) async {
+    try {
+      await DBProvider.db.actualizarLevantamientoSubido(idLocal, idFirebase);
+      final levantamientosBD = await DBProvider.db.obtenerLevantamientos();
+      levantamientos = [...?levantamientosBD];
+      notifyListeners();
+      return true; // Retorna true si la operación fue exitosa
+    } catch (e) {
+      return false; // Retorna false si ocurrió un error
     }
   }
 }

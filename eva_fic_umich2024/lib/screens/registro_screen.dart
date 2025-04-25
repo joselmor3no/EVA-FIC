@@ -119,7 +119,7 @@ class _LoginForm extends StatelessWidget {
 
                       if (errorMessage == null) {
                         // ignore: use_build_context_synchronously
-                        Navigator.pushReplacementNamed(context, 'home');
+                        Navigator.pushReplacementNamed(context, 'login');
                       } else {
                         // print( errorMessage );
                         if (errorMessage.contains("MAIL_EXISTS")) {

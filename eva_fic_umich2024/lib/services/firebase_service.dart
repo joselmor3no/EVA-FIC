@@ -17,7 +17,7 @@ class FirebaseService {
   static FirebaseStorage storage = FirebaseStorage.instance;
   
 
-  static Future<bool> subirLevantamientoUsuario(
+  static Future<String> subirLevantamientoUsuario(
       BuildContext context, int levantamientoId) async {
     try {
       // Obtener el levantamiento de la base de datos local
@@ -26,7 +26,7 @@ class FirebaseService {
       if (levantamiento == null) {
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Levantamiento no encontrado')));
-        return false;
+        return "false";
       }
 
       // Subir el levantamiento a Firestore
@@ -41,51 +41,44 @@ class FirebaseService {
       });
       String idEvaluacion = levantamientoRef.id;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Levantamiento subido con éxito')));
-
       // Subir formatos y sus imágenes asociadas
       List<FormatoGeneralModel>? formatos =
           await DBProvider.db.obtenerFormatosGenerales(levantamientoId);
-      if (formatos == null) {
-        print("No se encontraron formatos para el levantamiento");
-        return true;
-      }
+      if (formatos != null) {
+        for (FormatoGeneralModel formato in formatos) {
+          DocumentReference formatoRef =
+              levantamientoRef.collection('formatos').doc();
+          await formatoRef.set({
+            ...formato.toJson(),
+            'id_evaluacion': idEvaluacion,
+            'id_formato_local': formato.id
+          });
 
-      for (FormatoGeneralModel formato in formatos) {
-        DocumentReference formatoRef =
-            levantamientoRef.collection('formatos').doc();
-        await formatoRef.set({
-          ...formato.toJson(),
-          'id_evaluacion': idEvaluacion,
-          'id_formato_local': formato.id
-        });
-
-        List<ImagenesFGModel>? imagenes =
-            await DBProvider.db.obtenerImagenesFG(formato.id!);
-        if (imagenes != null && imagenes.isNotEmpty) {
-          await subirImagenes(formatoRef.id, imagenes);
+          List<ImagenesFGModel>? imagenes =
+              await DBProvider.db.obtenerImagenesFG(formato.id!);
+          if (imagenes != null && imagenes.isNotEmpty) {
+            await subirImagenes(idEvaluacion,formatoRef.id, imagenes);
+          }
         }
       }
-
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Formatos subidos con éxito')));
-      return true;
+          const SnackBar(content: Text('Levantamiento subido con éxito')));
+      return idEvaluacion;
     } catch (e) {
-      print('Error al subir el levantamiento y formatos: $e');
+      //print('Error al subir el levantamiento y formatos: $e');
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('Error al subir levantamiento y formatos: $e')));
-      return false;
+      return "false";
     }
   }
 
-  static Future<void> subirImagenes(
+  static Future<void> subirImagenes(String idLevantamiento,
       String idFormato, List<ImagenesFGModel> imagenes) async {
 
     for (ImagenesFGModel imagen in imagenes) {
       File file = File(imagen.rutaDispositivo);
       if (!await file.exists()) {
-        print('Archivo no encontrado: ${imagen.rutaDispositivo}');
+        //print('Archivo no encontrado: ${imagen.rutaDispositivo}');
         continue;
       }
 
@@ -100,19 +93,21 @@ class FirebaseService {
           final String downloadUrl = await ref.getDownloadURL();
 
           await FirebaseFirestore.instance
-              .collection('formatos')
-              .doc(idFormato)
+              .collection('levantamientos') 
+              .doc(idLevantamiento) 
+              .collection('formatos') 
+              .doc(idFormato) 
               .collection('imagenes')
               .add({
             'url': downloadUrl,
             'nombre': path.basename(imagen.rutaDispositivo)
           });
-          print('Imagen subida: ${imagen.rutaDispositivo}');
+
         } else {
-          print('Upload failed with state: ${snapshot.state}');
+          //print('Upload failed with state: ${snapshot.state}');
         }
       } catch (e) {
-        print('Error al subir imagen: $e');
+        //print('Error al subir imagen: $e');
       }
     }
   }

@@ -16,7 +16,7 @@ class CustomNavigationBar extends StatelessWidget {
     final currentIndex = inicialesProvider.selectMenu;
     List<String> informacion;
     return BottomNavigationBar(
-      onTap: (int i) async => {
+      onTap: (int i) async => { 
         inicialesProvider.selectMenu = i,
         if (inicialesProvider.usuarioSistema == '')
           {

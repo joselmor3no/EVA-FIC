@@ -21,9 +21,14 @@ class HomeScreen extends StatelessWidget {
     final authService = Provider.of<AuthService>(context, listen: false);
 
     return Scaffold(
-      appBar: AppBar(elevation: 0, title: const Text('EVA-FIC'), actions: [
+      appBar: AppBar(elevation: 0, title: const Text('EVA-FIC',
+      style: TextStyle(
+        color: Colors.white,
+        fontWeight: FontWeight.bold,
+      ),), actions: [
         IconButton(
           icon: const Icon(Icons.logout_outlined),
+          color: Colors.white,
           onPressed: () async {
             await authService.logout();
             // ignore: use_build_context_synchronously
@@ -86,7 +91,7 @@ class _HomeScreenBody extends StatelessWidget {
           },
         );
       default:
-        return const LevantamientosScreen();
+        return const InformacionInspectorScreen();
     }
   }
 }

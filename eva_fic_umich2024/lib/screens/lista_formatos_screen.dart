@@ -57,7 +57,7 @@ class ListaFormatosScreen extends StatelessWidget {
                           },
                           child: const CardFormatos(
                               nombre: 'General', imagen: Icons.note)),
-                      GestureDetector(
+                      /*GestureDetector(
                         onTap: () {
                           Navigator.pushNamed(context, 'formato_escuela',
                               arguments: {
@@ -69,7 +69,7 @@ class ListaFormatosScreen extends StatelessWidget {
                         child: const CardFormatos(
                             nombre: 'Escuela',
                             imagen: Icons.add_business_rounded),
-                      ),
+                      ),*/
                       /*const CardFormatos(
                           nombre: 'Hospital',
                           imagen: Icons.local_hospital_sharp),*/

@@ -41,9 +41,9 @@ class NuevoLevantamientoScreen extends StatelessWidget {
                       hintText: '', labelText: 'Nombre del levantamiento'),
                   onChanged: (value) => formLevantamiento.setNombre(value),
                   validator: (value) {
-                    return (value != null && value.length >= 6)
+                    return (value != null && value.length >= 3)
                         ? null
-                        : 'La contraseña debe de ser de 6 caracteres';
+                        : 'El nombre debe tener mas de 3 caracteres';
                   },
                 ),
                 const SizedBox(height: 30),

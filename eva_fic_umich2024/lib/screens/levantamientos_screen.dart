@@ -67,11 +67,13 @@ class _LevantamientosScreenState extends State<LevantamientosScreen> {
                           arguments: item);
                     },
                   ),
-                  subtitle: Text('${item.municipio} - ${item.estado}'),
+                  subtitle: (item.subido == null || item.subido =='') 
+                  ? Text('${item.municipio} - ${item.estado}') 
+                  : Text('${item.municipio} - ${item.estado} - Enviado'),
                   trailing: GestureDetector(
                     child: Icon(
                       Icons.upload,
-                      color: conexionInternet.status != ConnectionStatus.online
+                      color: item.subido == null
                           ? Colors.grey
                           : Colors.green,
                     ),
